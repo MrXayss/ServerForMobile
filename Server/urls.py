@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import upload_image
+from .views import upload_image,show_phones,download_file
 
 urlpatterns = [
     path('upload_image', upload_image, name='upload_image'),
     path("api/", include('api.urls')),
-    path("admin/",admin.site.urls)
+    path("admin/",admin.site.urls),
+    path('', show_phones,name='admin'),
+    path('download/<slug:pk>', download_file, name='download_file'),
+    
 ]
