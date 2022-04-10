@@ -25,7 +25,7 @@ SECRET_KEY = 'rqh$tw(!6zaqcq$+n)=40czc97q2#hw=q&0yt-q1x%u$m-j527'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.84','127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.84','127.0.0.1','signal.vita-control.ru']
 
 
 # Application definition
