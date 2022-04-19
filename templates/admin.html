@@ -25,24 +25,34 @@
       <thead>
         <tr>
           <th scope="col">ID</th>
+          <th scope="col">ID устройства</th>
           <th scope="col">Градус</th>
           <th scope="col">Широта</th>
           <th scope="col">Долгота</th>
           <th scope="col">Фото</th>
+          <th scope="col">Сигнал светофора</th>
+          <th scope="col">Местоположение светофора</th>
           <th scope="col">JSON</th>
+          <th scope="col">Удалить</th>
         </tr>
       </thead>
       <tbody>
         {% for obj in InfoTrafficLight_list %}
         <tr>
           <th>{{ obj.id }}</th>
+          <td>{{obj.id_device}}</td>
           <td>{{obj.gradus}}</td>
           <td>{{obj.latitude}}</td>
           <td>{{obj.longtitude}}</td>
-          <td><a href="{% url 'download_file' obj.id %}">FILE</a></td>
+          <td><a href="{% url 'download_file' obj.id %}">{{obj.photo}}</a></td>
+          <td>{{obj.signal}}</td>
+          <td>{{obj.location.name_trafficlight}}</td>
           <td>X: {{obj.json.x}}<br><br>
             Y: {{obj.json.y}}<br><br>
             Z: {{obj.json.z}}
+          </td>
+          <td>
+          <a href="{% url 'delete_data' obj.id%}">Удалить</a>
           </td>
         </tr>
         {% endfor %}
