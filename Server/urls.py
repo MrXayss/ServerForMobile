@@ -15,14 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import show_phones,download_file,delete_data
+from .views import show_info,download_file,delete_data,show_traffic,show_specific_traffic,right_trafiic,bad_traffic
 
 urlpatterns = [
     # path('upload_image', upload_image, name='upload_image'),
     path("api/", include('api.urls')),
     path("admin/",admin.site.urls),
-    path('', show_phones,name='admin'),
+    path(r'', show_info,name='admin'),
+    path('traffic/', show_traffic,name='traffic'),
     path('download/<slug:pk>', download_file, name='download_file'),
     path('delete/<slug:pk>', delete_data, name='delete_data'),
-    
+    path('traffic_info/<slug:pk>', show_specific_traffic, name='show_specific_traffic'),
+    path('traffic_right/<slug:pk>', right_trafiic, name='right_trafiic'),
+    path('traffic_bad/<slug:pk>', bad_traffic, name='bad_traffic'),
 ]

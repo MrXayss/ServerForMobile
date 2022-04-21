@@ -9,13 +9,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
 from django.template import loader
-from api.models import InfoTrafficLight
+from api.models import InfoTrafficLight,TraficLightName
 import os
 import mimetypes
 import codecs
 from PIL import Image
 from django.shortcuts import get_object_or_404
 from pathlib import Path
+from collections import defaultdict
 
 
 # @csrf_exempt
@@ -26,11 +27,29 @@ from pathlib import Path
 #     print(z["coord1"])
 #     return HttpResponse(request)
 
-def show_phones(request):
+def show_info(request):
     InfoTrafficLight1 = InfoTrafficLight.objects.order_by('id')
     template = loader.get_template('admin.html')
     context = {
         'InfoTrafficLight_list': InfoTrafficLight1,
+    }
+    return HttpResponse(template.render(context, request))
+
+def show_traffic(request):
+    InfoTrafficLight1 = TraficLightName.objects.order_by('id')
+    inf1 = InfoTrafficLight.objects.filter(location_id=19)
+    print(inf1)
+    template = loader.get_template('traffic.html')
+    context = {
+        'InfoTrafficLight_list': InfoTrafficLight1,
+    }
+    return HttpResponse(template.render(context, request))
+
+def show_specific_traffic(request, pk):
+    inf1 = InfoTrafficLight.objects.filter(location_id=pk)
+    template = loader.get_template('trafficinfo.html')
+    context = {
+        'InfoTrafficLight_list': inf1,
     }
     return HttpResponse(template.render(context, request))
 
@@ -49,4 +68,12 @@ def delete_data(request, pk):
     record = InfoTrafficLight.objects.get(id = pk)
     os.remove(Path("media") / str(record.photo))
     record.delete()
-    return redirect(show_phones)
+    return redirect(show_info)
+
+def right_trafiic(request, pk):
+    InfoTrafficLight.objects.filter(id=pk).update(status=False)
+    return redirect(show_info)
+
+def bad_traffic(request, pk):
+    InfoTrafficLight.objects.filter(id=pk).update(status=True)
+    return redirect(show_info)

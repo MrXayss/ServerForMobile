@@ -1,6 +1,7 @@
 from datetime import datetime
 from email.policy import default
 from django.db import models
+from django.forms import BooleanField
 
 
 class TraficLightName(models.Model):
@@ -15,6 +16,7 @@ class InfoTrafficLight(models.Model):
     json = models.JSONField(null=True)
     signal = models.CharField(max_length=100, verbose_name="Сигнал светофора",null=True)
     location = models.ForeignKey(TraficLightName,verbose_name="shelfafter", on_delete=models.CASCADE, null=True)
+    status = models.BooleanField(verbose_name="Айди устройства", null=True)
     class Meta:
         verbose_name = "Светофор"
         verbose_name_plural = "Список светофоров"
