@@ -44,7 +44,8 @@ def check_location(request):
     print(a)
     print("vby -",min(a,key=a.get))
     print("sas -",int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus))
-    sas = int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus)
+    sas = str(int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus))+'-'+str(min(a,key=a.get))
+    print(sas)
     # print(min(income, key=income.get))
     return HttpResponse(sas)
 
