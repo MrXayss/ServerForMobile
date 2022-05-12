@@ -30,10 +30,6 @@ def check_location(request):
     print(type(z['Latitude']))
     a = {}
     for rack in InfoTrafficLight.objects.all():
-        slat = radians(61.2490)
-        slon = radians(73.3820)
-        elat = radians(61.2493369)
-        elon = radians(73.3840201)
         # dist = 6371.01 * acos(sin(slat)*sin(elat) + cos(slat)*cos(elat)*cos(slon - elon))
         dist = 6371.01 * acos(sin(radians(z['Latitude']))*sin(radians(rack.latitude)) + cos(radians(z['Latitude']))*cos(radians(rack.latitude))*cos(radians(z['Longitude']) - radians(rack.longtitude)))
         print(dist*1000)
@@ -42,12 +38,15 @@ def check_location(request):
             a[rack.id]=dist*1000
         # print(round(dist, 5))
     print(a)
-    print("vby -",min(a,key=a.get))
-    print("sas -",int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus))
-    sas = str(int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus))+'-'+str(min(a,key=a.get))
-    print(sas)
-    # print(min(income, key=income.get))
-    return HttpResponse(sas)
+    if (a =={}):
+        sas ='0-0'
+        return HttpResponse(sas)
+    else:
+        print("vby -",min(a,key=a.get))
+        print("sas -",int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus))
+        sas = str(int(InfoTrafficLight.objects.get(id = min(a,key=a.get)).gradus))+'-'+str(min(a,key=a.get))
+        print(sas)
+        return HttpResponse(sas)
 
 @csrf_exempt
 @require_POST
