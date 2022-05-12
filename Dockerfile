@@ -13,6 +13,7 @@ WORKDIR ${PROJ_DIR}
 RUN pip install -U pip \
     pip install -r requirements.txt
 
+RUN DJANGO_SUPERUSER_PASSWORD="saw654366" python manage.py createsuperuser --username root --email s.sazono23@gmail.com --noinput
 COPY entry.sh /entry.sh
 RUN chmod +x /entry.sh
 EXPOSE 8000

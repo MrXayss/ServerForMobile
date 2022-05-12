@@ -1,9 +1,5 @@
 from django.shortcuts import render, redirect
-import logging
-import base64
-import binascii
-from datetime import datetime
-from django.http import HttpResponse, HttpResponseForbidden,FileResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect,FileResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -11,12 +7,10 @@ import json
 from django.template import loader
 from api.models import InfoTrafficLight,TraficLightName
 import os
-import mimetypes
-import codecs
-from PIL import Image
 from django.shortcuts import get_object_or_404
 from pathlib import Path
-from collections import defaultdict
+from django.contrib import auth
+from django.contrib.auth.models import User
 
 
 # @csrf_exempt
@@ -28,30 +22,39 @@ from collections import defaultdict
 #     return HttpResponse(request)
 
 def show_info(request):
-    InfoTrafficLight1 = InfoTrafficLight.objects.order_by('id')
-    template = loader.get_template('admin.html')
-    context = {
-        'InfoTrafficLight_list': InfoTrafficLight1,
-    }
-    return HttpResponse(template.render(context, request))
+    if not request.user.is_authenticated:
+        return redirect(login)
+    else:
+        InfoTrafficLight1 = InfoTrafficLight.objects.order_by('id')
+        template = loader.get_template('admin.html')
+        context = {
+            'InfoTrafficLight_list': InfoTrafficLight1,
+        }
+        return HttpResponse(template.render(context, request))
 
 def show_traffic(request):
-    InfoTrafficLight1 = TraficLightName.objects.order_by('id')
-    inf1 = InfoTrafficLight.objects.filter(location_id=19)
-    print(inf1)
-    template = loader.get_template('traffic.html')
-    context = {
-        'InfoTrafficLight_list': InfoTrafficLight1,
-    }
-    return HttpResponse(template.render(context, request))
+    if not request.user.is_authenticated:
+        return redirect(login)
+    else:
+        InfoTrafficLight1 = TraficLightName.objects.order_by('id')
+        inf1 = InfoTrafficLight.objects.filter(location_id=19)
+        print(inf1)
+        template = loader.get_template('traffic.html')
+        context = {
+            'InfoTrafficLight_list': InfoTrafficLight1,
+        }
+        return HttpResponse(template.render(context, request))
 
 def show_specific_traffic(request, pk):
-    inf1 = InfoTrafficLight.objects.filter(location_id=pk)
-    template = loader.get_template('trafficinfo.html')
-    context = {
-        'InfoTrafficLight_list': inf1,
-    }
-    return HttpResponse(template.render(context, request))
+    if not request.user.is_authenticated:
+        return redirect(login)
+    else:
+        inf1 = InfoTrafficLight.objects.filter(location_id=pk)
+        template = loader.get_template('trafficinfo.html')
+        context = {
+            'InfoTrafficLight_list': inf1,
+        }
+        return HttpResponse(template.render(context, request))
 
 
 def download_file(request, pk):
@@ -65,10 +68,13 @@ def download_file(request, pk):
         return HttpResponseNotFound("File not found %s" % my_object.id)
 
 def delete_data(request, pk):
-    record = InfoTrafficLight.objects.get(id = pk)
-    os.remove(Path("media") / str(record.photo))
-    record.delete()
-    return redirect(show_info)
+    if not request.user.is_authenticated:
+        return redirect(login)
+    else:
+        record = InfoTrafficLight.objects.get(id = pk)
+        os.remove(Path("media") / str(record.photo))
+        record.delete()
+        return redirect(show_info)
 
 def right_trafiic(request, pk):
     InfoTrafficLight.objects.filter(id=pk).update(status=False)
@@ -76,4 +82,34 @@ def right_trafiic(request, pk):
 
 def bad_traffic(request, pk):
     InfoTrafficLight.objects.filter(id=pk).update(status=True)
+    return redirect(show_info)
+
+def login(request):
+    template = loader.get_template('login.html')
+    context = {
+        'error': '',
+    }
+    return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def check_login(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return redirect(show_info)
+        else:
+            return redirect(login)
+
+def start_page(request):
+    template = loader.get_template('login.html')
+    context = {
+        'InfoTrafficLight_list': 'sas',
+    }
+    return HttpResponse(template.render(context, request))
+
+def logout(request):
+    auth.logout(request)
     return redirect(show_info)
