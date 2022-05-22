@@ -29,8 +29,7 @@
           <th scope="col">ID</th>
           <th scope="col">ID устройства</th>
           <th scope="col">Градус</th>
-          <th scope="col">Широта</th>
-          <th scope="col">Долгота</th>
+          <th scope="col">Местоположение</th>
           <th scope="col">Фото</th>
           <th scope="col">Сигнал светофора</th>
           <th scope="col">Местоположение светофора</th>
@@ -45,8 +44,7 @@
           <th>{{ obj.id }}</th>
           <td>{{obj.id_device}}</td>
           <td>{{obj.gradus}}</td>
-          <td>{{obj.latitude}}</td>
-          <td>{{obj.longtitude}}</td>
+          <td>{{obj.latitude}} {{obj.longtitude}}</td>
           <td><a href="{% url 'download_file' obj.id %}">{{obj.photo}}</a></td>
           <td>{{obj.signal}}</td>
           <td>{{obj.location.name_trafficlight}}</td>

@@ -26,6 +26,7 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Фото</th>
+          <th scope="col">Местоположение</th>
           <th scope="col">ID устройства</th>
           <th scope="col">Верное фото?</th>
         </tr>
@@ -35,6 +36,7 @@
         <tr>
           <th>{{ obj.id }}</th>
           <td><a href="{% url 'download_file' obj.id %}">{{obj.photo}}</a></td>
+          <td>{{obj.latitude}} {{obj.longtitude}}</td>
           <td>{{obj.id_device}}</td>
           {% if obj.status == None %}
           <td>
