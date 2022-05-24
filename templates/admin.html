@@ -18,8 +18,8 @@
     <nav class="navbar navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'admin' %}">Собранные данные</a>
-        <a href="{% url 'traffic' %}">Светофоры</a>
-        <a href="{% url 'logout' %}">выйти</a>
+        <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+        <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a>
       </div>
     </nav>
     
@@ -62,7 +62,7 @@
             {% endif %}
           </td>
           <td>
-          <a href="{% url 'delete_data' obj.id%}">Удалить</a>
+          <a class="btn btn-dark" href="{% url 'delete_data' obj.id%}">Удалить</a>
           </td>
         </tr>
         {% endfor %}

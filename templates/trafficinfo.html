@@ -18,7 +18,7 @@
     <nav class="navbar navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'admin' %}">Собранные данные</a>
-        <a href="{% url 'traffic' %}">Светофоры</a>
+        <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
       </div>
     </nav>
     <table class="table">
@@ -40,8 +40,8 @@
           <td>{{obj.id_device}}</td>
           {% if obj.status == None %}
           <td>
-            <a style="color:#008000" href="{% url 'right_trafiic' obj.id%}">Да</a>
-            <a style="color:#800000" href="{% url 'bad_traffic' obj.id%}">Нет</a>
+            <a class="btn btn-success" style="color:#ffffff" href="{% url 'right_trafiic' obj.id%}">Да</a>
+            <a class="btn btn-danger" style="color:#ffffff" href="{% url 'bad_traffic' obj.id%}">Нет</a>
           </td>
           {% else %}
           <td>
