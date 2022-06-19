@@ -50,23 +50,29 @@ def show_traffic(request):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
-        InfoTrafficLight1 = TraficLightName.objects.order_by('id')
-        template = loader.get_template('traffic.html')
-        context = {
-            'InfoTrafficLight_list': InfoTrafficLight1,
-        }
-        return HttpResponse(template.render(context, request))
+        if (UserRoles.objects.get(id_user_id=request.user.id).is_information_collector == True):
+            return redirect(show_info)
+        elif (UserRoles.objects.get(id_user_id=request.user.id).is_admin == True or UserRoles.objects.get(id_user_id=request.user.id).is_handler == True):
+            InfoTrafficLight = TraficLightName.objects.order_by('id')
+            template = loader.get_template('traffic.html')
+            context = {
+                'InfoTrafficLight_list': InfoTrafficLight,
+            }
+            return HttpResponse(template.render(context, request))
 
 def show_specific_traffic(request, pk):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
-        inf1 = TrafficLight.objects.filter(location_id=pk)
-        template = loader.get_template('trafficinfo.html')
-        context = {
-            'InfoTrafficLight_list': inf1,
-        }
-        return HttpResponse(template.render(context, request))
+        if (UserRoles.objects.get(id_user_id=request.user.id).is_information_collector == True):
+            return redirect(show_info)
+        elif (UserRoles.objects.get(id_user_id=request.user.id).is_admin == True or UserRoles.objects.get(id_user_id=request.user.id).is_handler == True):
+            inf1 = TrafficLight.objects.filter(location_id=pk)
+            template = loader.get_template('trafficinfo.html')
+            context = {
+                'InfoTrafficLight_list': inf1,
+            }
+            return HttpResponse(template.render(context, request))
 
 
 def download_file(request, pk):
@@ -83,16 +89,16 @@ def delete_data(request, pk):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
-        record = TrafficLight.objects.get(id = pk)
-        os.remove(Path("media") / str(record.photo))
-        record.delete()
-        return redirect(show_info)
+            record = TrafficLight.objects.get(id = pk)
+            os.remove(Path("media") / str(record.photo))
+            record.delete()
+            return redirect(show_info)
 
 def date_accelerometer(request):
-    inf1 = DateOfAccelerometer.objects.order_by('id')
+    inf = DateOfAccelerometer.objects.order_by('id')
     template = loader.get_template('accelerometer.html')
     context = {
-        'InfoTrafficLight_list': inf1,
+        'InfoTrafficLight_list': inf,
     }
     return HttpResponse(template.render(context, request))
 
@@ -113,11 +119,7 @@ def bad_traffic_main(request, pk):
     return redirect(show_info)
 
 def login(request):
-    template = loader.get_template('login.html')
-    context = {
-        'error': '',
-    }
-    return HttpResponse(template.render(context, request))
+    return render(request, 'login.html')
 
 @csrf_exempt
 def check_login(request):
@@ -130,13 +132,6 @@ def check_login(request):
             return redirect(show_info)
         else:
             return redirect(login)
-
-def start_page(request):
-    template = loader.get_template('login.html')
-    context = {
-        'InfoTrafficLight_list': 'sas',
-    }
-    return HttpResponse(template.render(context, request))
 
 def logout(request):
     auth.logout(request)
