@@ -18,16 +18,16 @@ def check_location(request):
     data_get = json.loads(request.body.decode('utf-8'))
     points = {}
     for i in TrafficLight.objects.all():
-        dist = 6371.01 * acos(sin(radians(data_get['Latitude']))*sin(radians(i.latitude)) + cos(radians(data_get['Latitude']))*cos(radians(i.latitude))*cos(radians(data_get['Longitude']) - radians(i.longtitude)))
-        if (round(dist*1000) <=5):
-            print("Ближайший светофор:", i.id)
-            points[i.id]=dist*1000
-    if (points =={}):
-        return_data ='0-0'
-        return HttpResponse(return_data)
-    else:
-        return_data = str(int(TrafficLight.objects.get(id = min(points,key=points.get)).gradus))+'-'+str(min(points,key=points.get))
-        return HttpResponse(return_data)
+        if(i.status == True):
+            dist = 6371.01 * acos(sin(radians(data_get['Latitude']))*sin(radians(i.latitude)) + cos(radians(data_get['Latitude']))*cos(radians(i.latitude))*cos(radians(data_get['Longitude']) - radians(i.longtitude)))
+                if (round(dist*1000) <=5):
+                    points[i.id]=dist*1000
+            if (points =={}):
+                return_data ='0-0'
+                return HttpResponse(return_data)
+            else:
+                return_data = str(int(TrafficLight.objects.get(id = min(points,key=points.get)).gradus))+'-'+str(min(points,key=points.get))
+                return HttpResponse(return_data)
 
 count = 0
 
