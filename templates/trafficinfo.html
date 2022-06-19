@@ -15,10 +15,17 @@
 
   </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'admin' %}">Собранные данные</a>
-        <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+        <a class="navbar-brand" style="color: rgb(255, 255, 255);" href="{% url 'admin' %}">Собранные данные</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+            </li>
+          </ul>
+        </div>
+        <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a>
       </div>
     </nav>
     <table class="table">
@@ -26,17 +33,21 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Фото</th>
+          <th scope="col">Отклонение</th>
           <th scope="col">Местоположение</th>
+          <th scope="col">Сигнал</th>
           <th scope="col">ID устройства</th>
-          <th scope="col">Верное фото?</th>
+          <th scope="col">Верные данные?</th>
         </tr>
       </thead>
       <tbody>
         {% for obj in InfoTrafficLight_list %}
         <tr>
           <th>{{ obj.id }}</th>
-          <td><a href="{% url 'download_file' obj.id %}">{{obj.photo}}</a></td>
+          <td><a href="{% url 'download_file' obj.id %}" target="_blank">{{obj.photo}}</a></td>
+          <td>{{obj.gradus}}</td>
           <td>{{obj.latitude}} {{obj.longtitude}}</td>
+          <td>{{obj.signal}}</td>
           <td>{{obj.id_device}}</td>
           {% if obj.status == None %}
           <td>

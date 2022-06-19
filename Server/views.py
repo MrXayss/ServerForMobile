@@ -5,40 +5,52 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
 from django.template import loader
-from api.models import InfoTrafficLight,TraficLightName
+from api.models import TrafficLight,TraficLightName,UserRoles,DateOfAccelerometer,Devices
 import os
 from django.shortcuts import get_object_or_404
 from pathlib import Path
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.contrib import admin
 
 
-# @csrf_exempt
-# @require_POST
-# def upload_image(request):
-#     z = json.loads(request.body.decode('utf-8'))
-#     print("POST:",json.dumps(request.body.decode('utf-8')))
-#     print(z["coord1"])
-#     return HttpResponse(request)
 
 def show_info(request):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
-        InfoTrafficLight1 = InfoTrafficLight.objects.order_by('id')
-        template = loader.get_template('admin.html')
-        context = {
-            'InfoTrafficLight_list': InfoTrafficLight1,
-        }
-        return HttpResponse(template.render(context, request))
+        print(request.user.id)
+        if (UserRoles.objects.get(id_user_id=request.user.id).is_information_collector == True):
+            role = "is_information_collector"
+            InfoTrafficLight1 = TrafficLight.objects.filter(id_device=Devices.objects.get(user=request.user.id).device).order_by('id')
+            template = loader.get_template('admin.html')
+            context = {
+                'InfoTrafficLight_list': InfoTrafficLight1,"role":role
+            }
+            return HttpResponse(template.render(context, request))
+        elif (UserRoles.objects.get(id_user_id=request.user.id).is_handler == True):
+            role = "is_handler"
+            InfoTrafficLight1 = TraficLightName.objects.order_by('id')
+            template = loader.get_template('traffic.html')
+            context = {
+                'InfoTrafficLight_list': InfoTrafficLight1,
+            }
+            return HttpResponse(template.render(context, request))
+        elif (UserRoles.objects.get(id_user_id=request.user.id).is_admin == True):
+            role = "is_admin"
+            InfoTrafficLight1 = TrafficLight.objects.order_by('id')
+            template = loader.get_template('admin.html')
+            context = {
+                'InfoTrafficLight_list': InfoTrafficLight1,"role":role
+            }
+            return HttpResponse(template.render(context, request))
+
 
 def show_traffic(request):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
         InfoTrafficLight1 = TraficLightName.objects.order_by('id')
-        inf1 = InfoTrafficLight.objects.filter(location_id=19)
-        print(inf1)
         template = loader.get_template('traffic.html')
         context = {
             'InfoTrafficLight_list': InfoTrafficLight1,
@@ -49,7 +61,7 @@ def show_specific_traffic(request, pk):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
-        inf1 = InfoTrafficLight.objects.filter(location_id=pk)
+        inf1 = TrafficLight.objects.filter(location_id=pk)
         template = loader.get_template('trafficinfo.html')
         context = {
             'InfoTrafficLight_list': inf1,
@@ -58,7 +70,7 @@ def show_specific_traffic(request, pk):
 
 
 def download_file(request, pk):
-    my_object = get_object_or_404(InfoTrafficLight, id=pk)
+    my_object = get_object_or_404(TrafficLight, id=pk)
     attach = request.GET.get("attach", False)
     try:
         return FileResponse(
@@ -71,17 +83,33 @@ def delete_data(request, pk):
     if not request.user.is_authenticated:
         return redirect(login)
     else:
-        record = InfoTrafficLight.objects.get(id = pk)
+        record = TrafficLight.objects.get(id = pk)
         os.remove(Path("media") / str(record.photo))
         record.delete()
         return redirect(show_info)
 
+def date_accelerometer(request):
+    inf1 = DateOfAccelerometer.objects.order_by('id')
+    template = loader.get_template('accelerometer.html')
+    context = {
+        'InfoTrafficLight_list': inf1,
+    }
+    return HttpResponse(template.render(context, request))
+
 def right_trafiic(request, pk):
-    InfoTrafficLight.objects.filter(id=pk).update(status=False)
+    TrafficLight.objects.filter(id=pk).update(status=False)
     return redirect(show_info)
 
 def bad_traffic(request, pk):
-    InfoTrafficLight.objects.filter(id=pk).update(status=True)
+    TrafficLight.objects.filter(id=pk).update(status=True)
+    return redirect(show_info)
+
+def right_trafiic_main(request, pk):
+    TraficLightName.objects.filter(id=pk).update(status=False)
+    return redirect(show_info)
+
+def bad_traffic_main(request, pk):
+    TraficLightName.objects.filter(id=pk).update(status=True)
     return redirect(show_info)
 
 def login(request):

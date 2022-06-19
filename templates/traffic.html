@@ -18,7 +18,7 @@
     <nav class="navbar navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'admin' %}">Собранные данные</a>
-        <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+        <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a>
       </div>
     </nav>
     <table class="table">
@@ -26,6 +26,10 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Название светофора</th>
+          <th scope="col">Отклонение</th>
+          <th scope="col">Местоположение</th>
+          <th scope="col">Статус</th>
+          <th scope="col">Верные данные?</th>
         </tr>
       </thead>
       <tbody>
@@ -33,6 +37,26 @@
         <tr>
           <th>{{ obj.id }}</th>
           <td><a href="{% url 'show_specific_traffic' obj.id %}">{{ obj.name_trafficlight }}</a></td>
+          <td>{{obj.gradus}}</td>
+          <td>{{obj.latitude}} {{obj.longtitude}}</td>
+          <td>
+            {% if obj.status == False %}
+              Верно
+            {% elif obj.status == True %}
+              Неверно
+            {% else %}
+              Не обработано
+            {% endif %}
+          </td>
+          <td>
+            {% if obj.status == False or obj.status == True %}
+              <a class="btn btn-success disabled" style="color:#ffffff" href="{% url 'right_trafiic_main' obj.id%}">Да</a>
+              <a class="btn btn-danger disabled" style="color:#ffffff" href="{% url 'bad_traffic_main' obj.id%}">Нет</a>
+            {% else %}
+              <a class="btn btn-success" style="color:#ffffff" href="{% url 'right_trafiic_main' obj.id%}">Да</a>
+              <a class="btn btn-danger" style="color:#ffffff" href="{% url 'bad_traffic_main' obj.id%}">Нет</a>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>

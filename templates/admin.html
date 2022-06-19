@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0014)about:internet -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
   <title>Отображение данных</title>
@@ -15,14 +14,81 @@
 
   </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark">
+    
+    {% if role == "is_admin" %}
+    <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'admin' %}">Собранные данные</a>
-        <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+        <a class="navbar-brand" style="color: rgb(255, 255, 255);" href="{% url 'admin' %}">Собранные данные</a>
+        <!-- <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+        <a class="btn btn-dark" href="{% url 'traffic' %}">Данные с акселерометра</a>
+        <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a> -->
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-dark" href="{% url 'date_accelerometer' %}">Данные с акселерометра</a>
+            </li>
+          </ul>
+        </div>
         <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a>
       </div>
     </nav>
-    
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">ID устройства</th>
+            <th scope="col">Градус</th>
+            <th scope="col">Местоположение</th>
+            <th scope="col">Фото</th>
+            <th scope="col">Сигнал светофора</th>
+            <th scope="col">Местоположение светофора</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Удалить</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in InfoTrafficLight_list %}
+          <tr>
+            <th>{{ obj.id }}</th>
+            <td>{{obj.id_device}}</td>
+            <td>{{obj.gradus}}</td>
+            <td>{{obj.latitude}} {{obj.longtitude}}</td>
+            <td><a href="{% url 'download_file' obj.id %}" target="_blank">{{obj.photo}}</a></td>
+            <td>{{obj.signal}}</td>
+            <td>{{obj.location.name_trafficlight}}</td>
+            <td>
+              {% if obj.status == False %}
+                Верно
+              {% elif obj.status == True %}
+                Неверно
+              {% else %}
+                Не обработано
+              {% endif %}
+            </td>
+            <td>
+            <a class="btn btn-dark" href="{% url 'delete_data' obj.id%}">Удалить</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% elif  role == "is_handler" %}
+    <nav class="navbar navbar-expand-lg bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" style="color: rgb(255, 255, 255);" href="{% url 'admin' %}">Собранные данные</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="btn btn-dark" href="{% url 'traffic' %}">Светофоры</a>
+            </li>
+          </ul>
+        </div>
+        <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a>
+      </div>
+    </nav>
     <table class="table">
       <thead>
         <tr>
@@ -33,9 +99,7 @@
           <th scope="col">Фото</th>
           <th scope="col">Сигнал светофора</th>
           <th scope="col">Местоположение светофора</th>
-          <th scope="col">JSON</th>
           <th scope="col">Статус</th>
-          <th scope="col">Удалить</th>
         </tr>
       </thead>
       <tbody>
@@ -45,13 +109,9 @@
           <td>{{obj.id_device}}</td>
           <td>{{obj.gradus}}</td>
           <td>{{obj.latitude}} {{obj.longtitude}}</td>
-          <td><a href="{% url 'download_file' obj.id %}">{{obj.photo}}</a></td>
+          <td><a href="{% url 'download_file' obj.id %}" target="_blank">{{obj.photo}}</a></td>
           <td>{{obj.signal}}</td>
           <td>{{obj.location.name_trafficlight}}</td>
-          <td>X: {{obj.json.x}}<br><br>
-            Y: {{obj.json.y}}<br><br>
-            Z: {{obj.json.z}}
-          </td>
           <td>
             {% if obj.status == False %}
               Верно
@@ -61,13 +121,57 @@
               Не обработано
             {% endif %}
           </td>
-          <td>
-          <a class="btn btn-dark" href="{% url 'delete_data' obj.id%}">Удалить</a>
-          </td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+      {% elif  role == "is_information_collector" %}
+      <nav class="navbar navbar-expand-lg bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" style="color: rgb(255, 255, 255);" href="{% url 'admin' %}">Собранные данные</a>
+          <a class="btn btn-dark" href="{% url 'logout' %}">Выйти</a>
+        </div>
+      </nav>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Градус</th>
+              <th scope="col">Местоположение</th>
+              <th scope="col">Фото</th>
+              <th scope="col">Сигнал светофора</th>
+              <th scope="col">Местоположение светофора</th>
+              <th scope="col">Статус</th>
+              <th scope="col">Удалить</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for obj in InfoTrafficLight_list %}
+            <tr>
+              <th>{{ obj.id }}</th>
+              <td>{{obj.gradus}}</td>
+              <td>{{obj.latitude}} {{obj.longtitude}}</td>
+              <td><a href="{% url 'download_file' obj.id %}" target="_blank">{{obj.photo}}</a></td>
+              <td>{{obj.signal}}</td>
+              <td>{{obj.location.name_trafficlight}}</td>
+              <td>
+                {% if obj.status == False %}
+                  Верно
+                {% elif obj.status == True %}
+                  Неверно
+                {% else %}
+                  Не обработано
+                {% endif %}
+              </td>
+              <td>
+                <a class="btn btn-dark" href="{% url 'delete_data' obj.id%}">Удалить</a>
+              </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+    {% endif %}
+    
 </body>
 <script>
 

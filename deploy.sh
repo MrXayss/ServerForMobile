@@ -1,5 +1,5 @@
 #!/bin/bash
-
+tar -czRf`date +%d-%m-%Y`.tgz db
 docker build --tag signal:latest .
 docker stop signal-server
 docker rm signal-server

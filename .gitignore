@@ -20,6 +20,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 *.pyc
+*.tgz
 /db/db.sqlite3
 /media
 /api/__pycache__
